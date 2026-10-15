@@ -1,7 +1,6 @@
 ---
 name: pstack-blast-radius
-description: "Find what a change could break somewhere else before it ships, beyond the diff, and prove the one fact it's safe because of by running real code instead of writing it up. Use for 'blast radius of X', 'what could this break', or reviewing a small diff you don't trust."
-disable-model-invocation: true
+description: "Find what a change could break outside its diff, and prove the one fact that makes it safe by running real code. Use automatically when the user asks what a change could break, whether a change is safe or risky, or for the blast radius of a change, and before merging a small diff that touches shared code, data formats, or library behavior."
 ---
 
 # Blast radius

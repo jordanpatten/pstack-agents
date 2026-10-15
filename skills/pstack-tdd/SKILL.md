@@ -1,7 +1,6 @@
 ---
 name: pstack-tdd
-description: "Use only when the user explicitly asks for TDD, a failing test, or a regression test, OR when the bug has an obvious cheap local test target. Skip when the test path is unclear, expensive, integration-heavy, or not requested."
-disable-model-invocation: true
+description: "Write a failing regression test first, then fix the bug and rerun the test. Use automatically when fixing a bug that has a cheap, local test path (an existing unit, component, or integration test for that code), or when the user asks for TDD, a failing test, or a regression test. Do not use when the test path is unclear, expensive, integration-heavy, or needs brittle mocks."
 ---
 
 # TDD Bug Fix

@@ -1,7 +1,6 @@
 ---
 name: pstack-show-me-your-work
-description: Keep a reviewable decision trail as one append-only TSV, audit it against the transcript at the end, and get a cross-model review of it. Use for long, autonomous, or multi-phase runs, or "keep a decision log I can audit".
-disable-model-invocation: true
+description: "Keep a decision log (one append-only TSV) for long or unattended work, audit it at the end, and get a second-model review of it. Use automatically when the user says they are stepping away, going to bed, or will check back later, when the user asks for a log or audit trail, and during any run driven by /goal or /loop."
 ---
 
 # Show me your work

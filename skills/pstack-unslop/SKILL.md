@@ -1,7 +1,6 @@
 ---
 name: pstack-unslop
-description: Cut AI tells from any writing.
-disable-model-invocation: true
+description: "Edit writing to remove AI tells (filler, hedging, AI vocabulary, long dashes, mannered prose). Use automatically when writing or editing documentation, a README, a PR description, release notes, or other prose meant for people to read, and when the user asks to clean up, tighten, or unslop text."
 ---
 
 # Unslop

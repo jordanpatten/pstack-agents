@@ -1,7 +1,6 @@
 ---
 name: pstack-ketchup
-description: Catch the user up on what changed in this chat since their last message, in a few plain sentences and small visuals, with just enough context on each action item to make the call. Use for /pstack-ketchup, or after an unattended run.
-disable-model-invocation: true
+description: "Catch the user up on what changed since their last message, in a few plain sentences, with the decisions only they can make. Use automatically when the user returns after an unattended run or asks to catch them up, for a status update, or what happened while they were away."
 ---
 
 # Ketchup

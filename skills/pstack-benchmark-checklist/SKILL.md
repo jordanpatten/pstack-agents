@@ -1,7 +1,6 @@
 ---
 name: pstack-benchmark-checklist
-description: "Vet a perf measurement (limiter, tuning, limits, errors, repeatability, relevance, and whether the work happened) before you report or act on it. Use when you run a benchmark or report a speedup or regression you measured."
-disable-model-invocation: true
+description: "Vet a performance number before you report or act on it: what limits it, whether both sides were tuned, errors, repeat runs, end-to-end relevance, and whether the work actually ran. Use automatically whenever you measure or are about to report a speedup, slowdown, regression, latency, or throughput number, or compare the speed of two options."
 ---
 
 # Benchmark checklist
