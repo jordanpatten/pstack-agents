@@ -26,21 +26,19 @@ function Copy-Skills([string]$dest) {
 	foreach ($n in $skillNames) { Copy-Item -Recurse (Join-Path $src "skills\$n") (Join-Path $dest $n) }
 }
 
-function Get-Rules([string]$skillsDir) {
-	$fwd = $skillsDir -replace '\\', '/'
-	(Get-Content -Raw (Join-Path $src 'rules\pstack-core.md')).Replace('{{PSTACK_SKILLS}}', $fwd)
+function Read-Text([string]$path) {
+	if (-not (Test-Path $path)) { return '' }
+	[IO.File]::ReadAllText($path)
 }
 
-function Remove-Block([string]$file) {
-	if (-not (Test-Path $file)) { return }
-	$out = New-Object System.Collections.Generic.List[string]
-	$skip = $false
-	foreach ($line in Get-Content $file) {
-		if ($line -eq $begin) { $skip = $true; continue }
-		if ($line -eq $end) { $skip = $false; continue }
-		if (-not $skip) { $out.Add($line) }
-	}
-	Set-Content -Path $file -Value $out -Encoding utf8
+function Get-Rules([string]$skillsDir) {
+	$fwd = $skillsDir -replace '\\', '/'
+	(Read-Text (Join-Path $src 'rules\pstack-core.md')).Replace('{{PSTACK_SKILLS}}', $fwd)
+}
+
+function Remove-Block([string]$text) {
+	$pattern = '(?s)\r?\n?' + [regex]::Escape($begin) + '.*?' + [regex]::Escape($end) + '\r?\n?'
+	[regex]::Replace($text, $pattern, "`n").Trim([char]0xFEFF, "`r", "`n", ' ')
 }
 
 $utf8 = New-Object System.Text.UTF8Encoding($false)
@@ -63,7 +61,7 @@ foreach ($t in $Targets) {
 		New-Item -ItemType Directory -Force $rules, $agents | Out-Null
 		[IO.File]::WriteAllText((Join-Path $rules 'pstack-core.md'), (Get-Rules $skills), $utf8)
 		Copy-Item -Force (Join-Path $src 'claude-agents\pstack-delegate.md') (Join-Path $agents 'pstack-delegate.md')
-		$sicko = (Get-Content -Raw (Join-Path $src 'claude-agents\pstack-comment-sicko.header.md')) + (Get-Content -Raw (Join-Path $src 'skills\pstack-no-comments\comment-sicko.md'))
+		$sicko = (Read-Text (Join-Path $src 'claude-agents\pstack-comment-sicko.header.md')) + (Read-Text (Join-Path $src 'skills\pstack-no-comments\comment-sicko.md'))
 		[IO.File]::WriteAllText((Join-Path $agents 'pstack-comment-sicko.md'), $sicko, $utf8)
 		Write-Host "claude: skills in $skills, rules in $rules, agents in $agents"
 	}
@@ -73,17 +71,19 @@ foreach ($t in $Targets) {
 		$agentsMd = Join-Path $codexHome 'AGENTS.md'
 		if ($Uninstall) {
 			Remove-Skills $skills
-			Remove-Block $agentsMd
+			if (Test-Path $agentsMd) {
+				$rest = Remove-Block (Read-Text $agentsMd)
+				[IO.File]::WriteAllText($agentsMd, $(if ($rest) { "$rest`n" } else { '' }), $utf8)
+			}
 			Write-Host 'codex: removed'
 			continue
 		}
 		Copy-Skills $skills
 		New-Item -ItemType Directory -Force $codexHome | Out-Null
-		if (-not (Test-Path $agentsMd)) { New-Item -ItemType File $agentsMd | Out-Null }
-		Remove-Block $agentsMd
-		$existing = if ((Get-Item $agentsMd).Length -gt 0) { (Get-Content -Raw $agentsMd).TrimEnd() + "`n" } else { '' }
+		$rest = Remove-Block (Read-Text $agentsMd)
 		$block = "$begin`n" + (Get-Rules $skills).TrimEnd() + "`n$end`n"
-		[IO.File]::WriteAllText($agentsMd, $existing + $block, $utf8)
+		$out = if ($rest) { "$rest`n`n$block" } else { $block }
+		[IO.File]::WriteAllText($agentsMd, $out, $utf8)
 		Write-Host "codex: skills in $skills, rules appended to $agentsMd"
 	}
 }
